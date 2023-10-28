@@ -13,20 +13,19 @@ import java.io.File;
 public class WebClientRunnable implements Runnable {
     private WebClient.Builder webClientBuilder;
     private String filename;
+    private String appUrl;
 
-    @Value("${app.url}")
-    private String testUri;
-
-    public WebClientRunnable(WebClient.Builder webClientBuilder, String idx) {
+    public WebClientRunnable(WebClient.Builder webClientBuilder, String filename, String appUrl) {
         this.webClientBuilder = webClientBuilder;
-        this.filename = "/home/ilya/Downloads/test_"+idx+".xlsx";
+        this.filename = filename;
+        this.appUrl = appUrl;
     }
 
     public void run() {
         try {
         final WebClient webClient = webClientBuilder.build();
         webClient.patch()
-                .uri("testUri")
+                .uri(appUrl)
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .body(BodyInserters.fromMultipartData(fromFile(new File(filename))))
                 .retrieve()

@@ -11,6 +11,7 @@ import java.util.stream.IntStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -21,19 +22,26 @@ public class AppStartupRunner implements ApplicationRunner {
     private static final Logger LOG =
       LoggerFactory.getLogger(AppStartupRunner.class);
 
-    
+    @Value("${xls.original}")
+    private String strOriginal;
+
+    @Value("${xls.copied.prefix}")
+    private String strCopiedPrefix;
+    @Value("${xls.copied.postfix}")
+    private String strCopiedPostfix;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
         LOG.info("Application started with option names : {}", 
           args.getOptionNames());
         LOG.info("Generate test files");
 
-        File original = new File("/home/ilya/Downloads/test.xlsx");
+        File original = new File(strOriginal);
 
         IntStream stream = IntStream.range(1, 1001); 
         stream.forEach(i ->{
             try{
-                File copied = new File("/home/ilya/Downloads/test_"+i+".xlsx");
+                File copied = new File(strCopiedPrefix+i+strCopiedPostfix);
                 try (
                     InputStream in = new BufferedInputStream(
                         new FileInputStream(original));
@@ -52,7 +60,7 @@ public class AppStartupRunner implements ApplicationRunner {
             }
         }); 
         
-        LOG.info("Generation test files finished");
+        LOG.info("Generation test files - finished");
 
 
     }

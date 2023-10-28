@@ -19,15 +19,19 @@ public class MeterVTController {
     @Value("${idx.to}")
     private Integer idxTo;
 
-    @Value("${app.url}")
-    private String testUri;
+    @Value("${xls.copied.prefix}")
+    private String strCopiedPrefix;
+    @Value("${xls.copied.postfix}")
+    private String strCopiedPostfix;
 
+    @Value("${app.url}")
+    private String appUrl;
 
     @GetMapping(value = "/start")
     public void upload() {
         IntStream.range(idxFrom, idxTo).parallel().forEach(i -> {
             try {
-                Thread.ofVirtual().name(""+i).start(new WebClientRunnable(webClientBuilder, ""+i)).join();;    
+                Thread.ofVirtual().name(""+i).start(new WebClientRunnable(webClientBuilder, strCopiedPrefix+i+strCopiedPostfix, appUrl)).join();;    
             } catch (Exception e) {
                 e.printStackTrace();
             }
