@@ -30,6 +30,12 @@ public class AppStartupRunner implements ApplicationRunner {
     @Value("${xls.copied.postfix}")
     private String strCopiedPostfix;
 
+    @Value("${idx.from}")
+    private Integer idxFrom;
+
+    @Value("${idx.to}")
+    private Integer idxTo;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
         LOG.info("Application started with option names : {}", 
@@ -38,7 +44,7 @@ public class AppStartupRunner implements ApplicationRunner {
 
         File original = new File(strOriginal);
 
-        IntStream stream = IntStream.range(1, 1001); 
+        IntStream stream = IntStream.range(idxFrom, idxTo); 
         stream.forEach(i ->{
             try{
                 File copied = new File(strCopiedPrefix+i+strCopiedPostfix);
