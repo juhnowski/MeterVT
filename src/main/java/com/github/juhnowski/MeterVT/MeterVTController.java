@@ -12,6 +12,12 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.File;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+
+import java.net.URL;
+import java.util.List;
+import java.util.stream.IntStream;
 
 
 @RestController
@@ -21,19 +27,12 @@ public class MeterVTController {
 
     @GetMapping(value = "/start")
     public void upload() {
-        final WebClient webClient = webClientBuilder.build();
-        webClient.patch()
-                .uri("http://127.0.0.1:8082/api/engagements")
-                .contentType(MediaType.MULTIPART_FORM_DATA)
-                .body(BodyInserters.fromMultipartData(fromFile(new File("/home/ilya/Downloads/test_1.xlsx"))))
-                .retrieve()
-                .bodyToMono(String.class)   
-                .block();   
-    }
-
-    public MultiValueMap<String, HttpEntity<?>> fromFile(File file) {
-        MultipartBodyBuilder builder = new MultipartBodyBuilder();
-        builder.part("file", new FileSystemResource(file));
-        return builder.build();
+        IntStream.range(1, 1001).parallel().forEach(i -> {
+            try {
+                Thread.ofVirtual().name(""+i).start(new WebClientRunnable(webClientBuilder, ""+i)).join();;    
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 }
